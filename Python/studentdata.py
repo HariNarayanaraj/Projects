@@ -4,9 +4,6 @@ def header():
     print("=====================================")
 
 
-header()
-
-
 def option():
     print("Choose your Option")
     print("1.Add new Student")
@@ -15,17 +12,9 @@ def option():
     print("4.Delete Student")
     print("5.Exit")
 
-
-option()
-
-
 def inputData():
     userAction = input("Type your option :")
     print("you have selected option =", userAction)
-
-
-inputData()
-
 
 def addstudentdata():
     header()
@@ -37,10 +26,6 @@ def addstudentdata():
     print("Enter student Phone Number :")
     phone = input()
     insertUser(name, age, phone)
-
-
-addstudentdata()
-
 
 def searchFromUser():
     header()
