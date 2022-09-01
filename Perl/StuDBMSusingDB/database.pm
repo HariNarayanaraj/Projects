@@ -4,20 +4,8 @@ use DBI;
 
 use Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(insertUser searchUser deleteUser);
+@EXPORT = qw(insertUser searchUser deleteUser updateData);
 	
-# open(FILE, '+>>', 'D:\Perl\StudentDBMS\student.txt') or die "Couldn't open file file.txt, $!";	
-# open(FILE, '+>', 'D:\Perl\Studentdb\student.db') or die "Couldn't open file file.db, $!";
-
-sub insertUser{
-	($name,$age,$phone) = @_;
-	chomp($name);
-	chomp($age);
-	chomp($phone);
-	print FILE "$name~$age~$phone\n";
-	print "Inserted the information into database successfully\n";
-}
-
 sub connectdatabase{
 	$driver = "SQLite";
 	$database = "student.db";
@@ -29,55 +17,71 @@ sub connectdatabase{
 
 sub insertIntoDatabase{
 	connectdatabase();
-	($name,$age,$phone) = @_;
-	chomp($name);
-	chomp($age);
-	chomp($phone);
-	print "$name~$age~$phone\n";
+	($student_name,$student_age,$student_phone) = @_;
+	chomp($student_name);
+	chomp($student_age);
+	chomp($student_phone);
+	print "$student_name~$student_age~$student_phone\n";
 	$sth = $dbh->prepare("INSERT INTO STUDENTTABLE(Name, Age, Phone)
-	VALUES(?,?,?)");
-	$sth->execute($name,$age,$phone) or die $DBI::errstr;
+				VALUES(?,?,?)");
+	$sth->execute($student_name,$student_age,$student_phone) or die $DBI::errstr;
 	$sth->finish();
-	# $dbh->commit or die $DBI::errstr;
- }
-
+}
+ 
+sub readDataBase{
+	connectdatabase();
+	$sth = $dbh->prepare("SELECT * FROM STUDENTTABLE");
+	$sth->execute() or die $DBI::errstr;
+	while (@row = $sth->fetchrow_array()){
+		($Name,$Age,$Phone) = @row;
+		print "$Name - $Age - $Phone\n";
+		sleep(1);
+	}
+	$sth->finish();
+}
 sub searchUser{
 	connectdatabase();
-	($searchname) = @_;
-	chomp($searchname);
+	($search_name) = @_;
+	chomp($search_name);
 	$found = false;
-	open(FILE, '<', 'student.db') or die "Couldn't open file file.txt, $!";
-	foreach(<FILE>){
-	# @filedata = split('~', $_);
-	@filedata = $_;
-	($matchname) = $filedata;
-	# ($matchname) = $filedata[0];
-	if($searchname eq $matchname){
-		print "@filedata\n";
-		print "$matchname\n";
-		sleep(1);
-		$found = true;
-		}
+	$sth = $dbh->prepare("SELECT Name,Age,Phone FROM STUDENTTABLE
+	WHERE Name = ?");
+	$sth->execute($search_name) or die $DBI::errstr;
+	while (@row = $sth->fetchrow_array()){
+		($search_name) eq @row; 
+			print "@row\n";
+			sleep(2);
+			$found = true;
+	$sth->finish();
 	}
- 	if($found eq false){
-		print "NOT FOUND\n";
-		sleep(2);
+	if ($found eq false) {
+		print "Student Not Found\n";
 	}
-	return($matchname);
 }
 
 sub deleteUser{
 	connectdatabase();
-	($matchedData) = @_;
-	@Exactline = $matchedData;
-	open(FILE, '<', 'student.txt');
-	open(UPDATED, '+>', 'updatestudent.txt');
-	foreach (<FILE>){
-		@datafile = $_;
-		print UPDATED $_ unless /@Exactline/;
-	}
+	($delete_name) = @_;
+	chomp($delete_name);
+	$sth = $dbh->prepare("DELETE FROM STUDENTTABLE
+	WHERE Name = ?");
+	$sth->execute($delete_name) or die $DBI::errstr;
+	print "Student $delete_name Data has been Deleted \n";
+	sleep(1);			
 }
 
-
+sub updateData{
+	connectdatabase();
+	($student_name,$Update_phone) = @_;
+	chomp($student_name);
+	chomp($Update_phone);
+	print "$student_name-$Update_phone\n";
+	sleep(1);	
+	$sth = $dbh->prepare("UPDATE STUDENTTABLE
+	SET Phone = ?
+	WHERE Name = ?");
+	$sth->execute($Update_phone,$student_name) or die $DBI::errstr;
+	$sth->finish();
+}
 1;
 		

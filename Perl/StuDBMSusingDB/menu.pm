@@ -3,12 +3,12 @@ package menu;
 use database;
 use Exporter;
 @ISA = qw(Exporter);
-@EXPORT = qw(header option readFile addFromUser searchFromUser deletefromUser process);
+@EXPORT = qw(header option readFile addFromUser searchFromUser deletefromUser UpdatefromUser process);
 	
 sub header{
 	system("cls");
 	print "=====================================\n";
-	print "collage of India\n";
+	print "Collage of India\n";
 	print "=====================================\n";
 }
 
@@ -18,7 +18,8 @@ sub option{
 	print "2.show student Data\n";
 	print "3.Search Student\n";
 	print "4.Delete Student\n";
-	print "5.Exit\n";
+	print "5.Update Student Details\n";
+	print "6.Exit\n";
 }
 
 sub inputData{
@@ -31,54 +32,44 @@ sub inputData{
 sub addFromUser{
 	header();
 	print "ADD NEW STUDENT DATA\n\n";
-	print "Enter student NAME :";
-	$name = <STDIN>;
-	print "Enter student AGE :";
-	$age = <STDIN>;
-	print "Enter student Phone Number :";
-	$phone = <STDIN>;
-	#database::insertUser($name,$age,$phone);
-	database::insertIntoDatabase($name,$age,$phone);
+	print "Enter Student NAME :";
+	$student_name = <STDIN>;
+	print "Enter Student AGE :";
+	$student_age = <STDIN>;
+	print "Enter Student Phone Number :";
+	$student_phone = <STDIN>;
+	database::insertIntoDatabase($student_name,$student_age,$student_phone);
 }
+
 sub readFile{
-	open(FILE, '<', 'student.txt') or die "Couldn't open file file.txt, $!";
-	while(<FILE>){
-		print "$_\n";
-		sleep(1);
-	}
-	close(FILE);
+	database::readDataBase();
+	
 }
 
 sub searchFromUser{
 	header();
 	print "Search STUDENT DATA\n\n";
 	print "Enter student NAME :";
-	$searchname = <STDIN>;
-	database::searchUser($searchname);
+	$search_name = <STDIN>;
+	database::searchUser($search_name);
 }
 
 sub deletefromUser{
 	header();
 	print "DELETE STUDENT DATA\n\n";
 	print "Enter a Name to Delete :";
-	$deletename = <STDIN>;
-	chomp($deletename);
-	#open(FILE, '<', 'student.txt') or die "Couldn't open file file.txt, $!";
-	open(FILE, '<', 'student.db') or die "Couldn't open file file.txt, $!";
-	foreach(<FILE>){
-	#@filedata = split('~', $_);
-	#($matchname) = $filedata[0];
-	
-	if($deletename eq $matchname){
-		$dellinename = delete(@filedata[0]);
-		$dellineage = delete(@filedata[1]);
-		$dellinephone = delete(@filedata[2]);
-		$matchedData = join( "~", "$dellinename", "$dellineage", "$dellinephone" );
-		print "$matchedData";
-		database::deleteUser($matchedData);
-		sleep(1);
-		}	
-	}
+	$delete_name = <STDIN>;
+	database::deleteUser($delete_name);
+}
+
+sub UpdatefromUser{
+	header();
+	print "Update STUDENT DATA\n\n";
+	print "Enter Student NAME :";
+	$student_name = <STDIN>;
+	print "Enter Update PhoneNumber :";
+	$Update_phone = <STDIN>;
+	database::updateData($student_name,$Update_phone);
 }
 	
 	
@@ -91,18 +82,20 @@ sub process{
 		readFile();
 	}
 	elsif ($userAction == 3){
-		searchFromUser();
-		
+		searchFromUser();	
 	}
 	elsif ($userAction == 4){
 		deletefromUser();	
 	}
 	elsif ($userAction == 5){
-		print "you are successfully EXIT\n";
+		UpdatefromUser();	
+	}
+	elsif ($userAction == 6){
+		print "You Are Successfully EXIT\n";
 		exit();
 	}
 	else{
-		while($userAction => 6)
+		while($userAction => 7)
 		{
 		print "Wrong Option\n\n";
 		sleep(1);

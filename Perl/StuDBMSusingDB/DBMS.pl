@@ -9,11 +9,7 @@ sub main{
 	menu::option();
 	menu::process();
 	
-	}
-	
-END{
-	print "Program Ended";
-}
+	}	
 		
 main();
 
